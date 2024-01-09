@@ -2,7 +2,7 @@
 ## Examining whether inflammation mediates effects of genetic risk and trauma on psychopathology
 </br>
 
-> _Imputation_LilfordP_221020.do_
+> _Imputation_221020.do_
 
 Stata .do file used to impute data for analyses where PRSs were exposures (up to n= 7859) and analyses where trauma was the exposure (up to n= 8700)
 </br>
