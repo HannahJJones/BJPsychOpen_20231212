@@ -1,5 +1,4 @@
 *code to run gsem mediation model across 50 imputed datasets
-* This is code built on Gemma Hammerton's bootstrap script
 
 * NOTE USING DEPRESSION AND ANXIETY PRSs AS EXAMPLE
 
@@ -38,14 +37,14 @@ postfile `memhold' 	str30 outcome str30 exposure str10 mediator ind_mn ind_totse
 local exposure 		stdPGS_MDD_S1 stdPGS_ANX_S1
 
 foreach med in IL6_f9 CRP_f9 {
-	use "Lilford_project_imputation_PRSanalysis_IMPUTED.dta", clear
+	use "project_imputation_PRSanalysis_IMPUTED.dta", clear
 	foreach exp of varlist `exposure' {
 		foreach out in 	negsymp_topdecile_24 mod_depression_24 any_anxiety_disorder_24 negsymp_topdecile_16 mod_depression_18 any_anxiety_disorder_18 {
 			capture postclose gsem_loop
 			postfile gsem_loop str30 outcome str30 exposure str10 mediator impdata ind ind_var dir dir_var tot tot_var ///
 			using "gsem_med_imp_temp.dta", replace
 			forvalues impdata = 1/50 { 
-				use "Lilford_project_imputation_PRSanalysis_IMPUTED.dta", clear
+				use "project_imputation_PRSanalysis_IMPUTED.dta", clear
 				mi convert flong
 				rename BMI_8 bmi_8
 				rename ParentalSoc parentalsoc
