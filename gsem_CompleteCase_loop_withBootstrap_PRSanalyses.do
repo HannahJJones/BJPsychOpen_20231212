@@ -20,7 +20,7 @@ postfile `memhold' 	str30 outcome str30 exposure str10 mediator N ///
 foreach med in crp il_6 {
 	foreach exp in stdPGS_PE_S1 stdPGS_SCZ_S1 stdPGS_MDD_S1 stdPGS_ANX_S1 {
 		foreach out in 	pliks24TH_3C_binary negsymp_topdecile_24 mod_depression_24 any_anxiety_disorder_24 {
-			use "Lilford_project_imputation_PRSanalysis.dta", clear // data used for imputation - NOT IMPUTED
+			use "project_imputation_PRSanalysis.dta", clear // data used for imputation - NOT IMPUTED
 							rename BMI_8 bmi_8
 							rename ParentalSoc parentalsoc
 							rename IL6_f9 il_6
