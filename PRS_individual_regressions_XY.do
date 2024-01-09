@@ -1,7 +1,7 @@
 ********************************************************************************
 * Set up environment and read in data
 *******************************************************************************
-use "Lilford_project_imputation_PRSanalysis_IMPUTED.dta", clear
+use "project_imputation_PRSanalysis_IMPUTED.dta", clear
 
 ********************************************************************************
 *** Perform logistic regression observational analyses
