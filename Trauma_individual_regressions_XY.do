@@ -1,7 +1,7 @@
 ********************************************************************************
 * Set up environment and read in data
 *******************************************************************************
-use "Lilford_project_imputation_TraumaAnalysis_IMPUTED.dta", clear
+use "project_imputation_TraumaAnalysis_IMPUTED.dta", clear
 
 ********************************************************************************
 *** Perform linear regression observational analyses
