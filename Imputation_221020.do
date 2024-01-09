@@ -1,13 +1,11 @@
 *PRS, inflammation, Psych mediation study - imputation 
-*Hannah Jones - 25/10/22
-*Based on Andrea Cortes - 01/05/2022
 
 ***********************************
 * Read in data 
 ***********************************	
 
 *loading data
-use "Lilford_project_variables_clean_imputation.dta", clear
+use "project_variables_clean_imputation.dta", clear
 
 ************************************************************************************************************************************************************************************************************************************************************************
 ***********************************
@@ -56,7 +54,7 @@ rs2228145_c crp_TF3 /// * auxilliary for mediators
 EPDSm_score BMI_7 patFamHistPsych matFamHistPsych matEdu homeOwnership // * auxilliary for outcomes
 * AT10_minq /// * Trauma exposure - DON'T IMPUTE
 
-save Lilford_project_imputation_PRSanalysis.dta, replace 
+save project_imputation_PRSanalysis.dta, replace 
 restore
 
 * SAVE DATA FOR TRAUMA ANALYSIS
@@ -79,7 +77,7 @@ EPDSm_score BMI_7 patFamHistPsych matFamHistPsych matEdu homeOwnership // * aux 
 *stdPGS_PE_S2 stdPGS_PE_S3 stdPGS_PE_S4 stdPGS_PE_S5 stdPGS_PE_S6 stdPGS_PE_S7 stdPGS_PE_S8 stdPGS_PE_S9 stdPGS_PE_S10 stdPGS_PE_S11 stdPGS_PE_S12 stdPGS_PE_GWSig /// * PE PRS exposures - DON'T IMPUTE
 *PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 PC11 PC12 PC13 PC14 PC15 PC16 PC17 PC18 PC19 PC20 /// * PCs - DON'T IMPUTE
 
-save Lilford_project_imputation_TraumaAnalysis.dta, replace 
+save project_imputation_TraumaAnalysis.dta, replace 
 restore
 
 ************************************************************************************************************************************************************************************************************************************************************************
@@ -93,7 +91,7 @@ restore
 set linesize 255 
 log using "MI_log_261022_prs.log", replace
 
-use Lilford_project_imputation_PRSanalysis.dta, clear 
+use project_imputation_PRSanalysis.dta, clear 
 drop *S2 *S3 *S4 *S5 *S7 *S8 *S9 *S10 *S11 *S12 PC11 PC12 PC13 PC14 PC15 PC16 PC17 PC18 PC19 PC20
 
 * making sure all missing values are set to .
@@ -108,7 +106,7 @@ negsymp_topdecile_16 BMI_8 matSMKpreg patSMKpreg ParentalSoc EPDSm_score matFamH
 mi set wide // prepares dataset as a multiple imputation dataset in wide format (one column per imputation per variable) + sets all the vars as unregistered. + sets M = 0
 mi misstable summarize // to identify missing values. this command reports the variables contaning missing values
 
-mi register imputed pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 mod_depression_24 severe_depression_24 any_anxiety_disorder_24 /// * outcomes, main @24
+mi register imputed 			pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 mod_depression_24 severe_depression_24 any_anxiety_disorder_24 /// * outcomes, main @24
 					PE_18_binary negsymp_topdecile_16 mild_depression_18 mod_depression_18 severe_depression_18  any_anxiety_disorder_18 /// * outcomes, sensitivity @18
 					IL6_f9 CRP_f9 /// * Mediators
 					BMI_8 sex matSMKpreg patSMKpreg ParentalSoc AT10_minq /// * covariates
@@ -116,7 +114,7 @@ mi register imputed pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 
 					crp_TF3	/// * aux for mediators	
 					EPDSm_score BMI_7 patFamHistPsych matFamHistPsych matEdu homeOwnership /// * aux for outcomes
 					rs2228145_c // * aux for mediators
-mi register regular aln qlet /// *IDs
+mi register regular 			aln qlet /// *IDs
 					stdPGS_ANX_S1 stdPGS_ANX_S6 stdPGS_ANX_GWSig /// * ANX PRS exposures
 					stdPGS_MDD_S1 stdPGS_MDD_S6 stdPGS_MDD_GWSig /// * MDD PRS exposures
 					stdPGS_SCZ_S1 stdPGS_SCZ_S6 stdPGS_SCZ_GWSig /// * SCZ PRS exposures
@@ -140,17 +138,17 @@ mi describe, detail // provides a more detailed report on mi data
 
 ***********************************	
 *** PRS ANALYSIS DATA:
-mi impute chained	(regress) 		BMI_8 BMI_7 /// 
-					(pmm, knn(10)) 	IL6_f9 CRP_f9 MFQccsScore crp_TF3 EPDSm_score ///
+mi impute chained			(regress) 		BMI_8 BMI_7 /// 
+					(pmm, knn(10)) 		IL6_f9 CRP_f9 MFQccsScore crp_TF3 EPDSm_score ///
 					(logit) 		pliks24TH_3C_binary negsymp_topdecile_24 any_anxiety_disorder_24 ///
 									PE_18_binary negsymp_topdecile_16 any_anxiety_disorder_18 matEdu ///
 									sex matSMKpreg patSMKpreg patFamHistPsych matFamHistPsych AT10_minq /// 
-					(logit, omit(i.mod_depression_24 i.severe_depression_24)) mild_depression_24 ///
-					(logit, omit(i.mild_depression_24 i.severe_depression_24)) mod_depression_24 ///					
-					(logit, omit(i.mod_depression_24 i.mild_depression_24)) severe_depression_24 ///				
-					(logit, omit(i.mod_depression_18 i.severe_depression_18)) mild_depression_18 ///
-					(logit, omit(i.mild_depression_18 i.severe_depression_18)) mod_depression_18 ///					
-					(logit, omit(i.mod_depression_18 i.mild_depression_18)) severe_depression_18 ///					
+					(logit, 		omit(i.mod_depression_24 i.severe_depression_24)) mild_depression_24 ///
+					(logit, 		omit(i.mild_depression_24 i.severe_depression_24)) mod_depression_24 ///					
+					(logit, 		omit(i.mod_depression_24 i.mild_depression_24)) severe_depression_24 ///				
+					(logit, 		omit(i.mod_depression_18 i.severe_depression_18)) mild_depression_18 ///
+					(logit, 		omit(i.mild_depression_18 i.severe_depression_18)) mod_depression_18 ///					
+					(logit,		 	omit(i.mod_depression_18 i.mild_depression_18)) severe_depression_18 ///					
 					(ologit) 		ParentalSoc rs2228145_c /// 
 					(mlogit)  		homeOwnership /// 
 					= 				stdPGS_ANX_S1 stdPGS_ANX_S6 stdPGS_ANX_GWSig ///
@@ -164,7 +162,7 @@ mi impute chained	(regress) 		BMI_8 BMI_7 ///
 				 
 log close
 
-save "Lilford_project_imputation_PRSanalysis_IMPUTED.dta"	  
+save "project_imputation_PRSanalysis_IMPUTED.dta"	  
 
 
 
@@ -177,7 +175,7 @@ save "Lilford_project_imputation_PRSanalysis_IMPUTED.dta"
 set linesize 255 
 log using "MI_log_261022_trauma.log", replace
 
-use Lilford_project_imputation_TraumaAnalysis.dta, clear 
+use project_imputation_TraumaAnalysis.dta, clear 
 
 * making sure all missing values are set to .
 foreach var of varlist aln pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 mod_depression_24 severe_depression_24 any_anxiety_disorder_24 ///
@@ -190,7 +188,7 @@ stdPGS_ANX_S1 stdPGS_MDD_S1 stdPGS_SCZ_S1 stdPGS_PE_S1 {
 mi set wide // prepares dataset as a multiple imputation dataset in wide format (one column per imputation per variable) + sets all the vars as unregistered. + sets M = 0
 mi misstable summarize // to identify missing values. this command reports the variables contaning missing values
 
-mi register imputed pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 mod_depression_24 severe_depression_24 any_anxiety_disorder_24 /// * outcomes, main @24
+mi register imputed 			pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 mod_depression_24 severe_depression_24 any_anxiety_disorder_24 /// * outcomes, main @24
 					PE_18_binary negsymp_topdecile_16 mild_depression_18 mod_depression_18 severe_depression_18  any_anxiety_disorder_18 /// * outcomes, sensitivity @18
 					IL6_f9 CRP_f9 /// * Mediators
 					BMI_8 sex matSMKpreg patSMKpreg ParentalSoc stdPGS_ANX_S1 stdPGS_MDD_S1 stdPGS_SCZ_S1 stdPGS_PE_S1 /// * covariates
@@ -198,7 +196,7 @@ mi register imputed pliks24TH_3C_binary negsymp_topdecile_24 mild_depression_24 
 					crp_TF3	/// * aux for mediators	
 					EPDSm_score BMI_7 patFamHistPsych matFamHistPsych matEdu homeOwnership /// * aux for outcomes
 					rs2228145_c // * aux for mediators
-mi register regular aln qlet /// *IDs
+mi register regular 			aln qlet /// *IDs
 					AT10_minq // * ANX PRS exposures
 
 mi describe, detail // provides a more detailed report on mi data
@@ -217,17 +215,17 @@ mi describe, detail // provides a more detailed report on mi data
 
 ***********************************	
 *** TO RUN ON BLUE PEBBLE - TRAUMA ANALYSIS DATA:
-mi impute chained	(regress) 		BMI_8 BMI_7 stdPGS_ANX_S1 stdPGS_MDD_S1 stdPGS_SCZ_S1 stdPGS_PE_S1 /// 
-					(pmm, knn(10)) 	IL6_f9 CRP_f9 MFQccsScore crp_TF3 EPDSm_score ///
+mi impute chained			(regress) 		BMI_8 BMI_7 stdPGS_ANX_S1 stdPGS_MDD_S1 stdPGS_SCZ_S1 stdPGS_PE_S1 /// 
+					(pmm, knn(10)) 		IL6_f9 CRP_f9 MFQccsScore crp_TF3 EPDSm_score ///
 					(logit) 		pliks24TH_3C_binary negsymp_topdecile_24 any_anxiety_disorder_24 ///
 									PE_18_binary negsymp_topdecile_16 any_anxiety_disorder_18 matEdu ///
 									sex matSMKpreg patSMKpreg patFamHistPsych matFamHistPsych /// 
-					(logit, omit(i.mod_depression_24 i.severe_depression_24)) mild_depression_24 ///
-					(logit, omit(i.mild_depression_24 i.severe_depression_24)) mod_depression_24 ///					
-					(logit, omit(i.mod_depression_24 i.mild_depression_24)) severe_depression_24 ///				
-					(logit, omit(i.mod_depression_18 i.severe_depression_18)) mild_depression_18 ///
-					(logit, omit(i.mild_depression_18 i.severe_depression_18)) mod_depression_18 ///					
-					(logit, omit(i.mod_depression_18 i.mild_depression_18)) severe_depression_18 ///					
+					(logit,			 omit(i.mod_depression_24 i.severe_depression_24)) mild_depression_24 ///
+					(logit, 		omit(i.mild_depression_24 i.severe_depression_24)) mod_depression_24 ///					
+					(logit, 		omit(i.mod_depression_24 i.mild_depression_24)) severe_depression_24 ///				
+					(logit, 		omit(i.mod_depression_18 i.severe_depression_18)) mild_depression_18 ///
+					(logit, 		omit(i.mild_depression_18 i.severe_depression_18)) mod_depression_18 ///					
+					(logit, 		omit(i.mod_depression_18 i.mild_depression_18)) severe_depression_18 ///					
 					(ologit) 		ParentalSoc rs2228145_c /// 
 					(mlogit)  		homeOwnership /// 
 					= 				AT10_minq /// 
@@ -237,4 +235,4 @@ mi impute chained	(regress) 		BMI_8 BMI_7 stdPGS_ANX_S1 stdPGS_MDD_S1 stdPGS_SCZ
 				 
 log close
 
-save "Lilford_project_imputation_TraumaAnalysis_IMPUTED.dta"	  
+save "project_imputation_TraumaAnalysis_IMPUTED.dta"	  
